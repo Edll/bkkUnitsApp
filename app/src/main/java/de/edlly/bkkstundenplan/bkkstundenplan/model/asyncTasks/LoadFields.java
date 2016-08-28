@@ -11,24 +11,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Fields;
 
-public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> {
-    private IloadWeeks listener;
+public class LoadFields extends AsyncTask<LoadFields.LoadWeeksParam, Long, Fields> {
+    private IloadFields listener;
     private Context context;
 
-    public LoadWeeks(IloadWeeks listener, Context context) {
+    public LoadFields(IloadFields listener, Context context) {
         this.listener = listener;
         this.context = context;
     }
 
 
     @Override
-    protected Weeks doInBackground(LoadWeeksParam... loadWeeksParams) {
-        Weeks weeks = null;
+    protected Fields doInBackground(LoadWeeksParam... loadWeeksParams) {
+        Fields fields = null;
         try {
-            URL url = new URL("http://10.0.2.2/bkk/jsonoutput.php?week=all");
-            // URL url = new URL("http://www.edlly.de/bkk/jsonoutput.php?week=all");
+            URL url = new URL("http://10.0.2.2/bkk/jsonoutput.php?field=1&class=61");
+            //  URL url = new URL("http://edlly.de/bkk/jsonoutput.php?field=2&class=135");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
@@ -49,8 +49,8 @@ public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> 
                 bufferedReader.close();
 
                 String data = stringBuilder.toString();
-                weeks = new Gson().fromJson(data, Weeks.class);
 
+                fields = new Gson().fromJson(data, Fields.class);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,17 +65,19 @@ public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> 
 
         }
 
-        return weeks;
+        return fields;
 
     }
 
     @Override
-    protected void onPostExecute(final Weeks weeks) {
-        listener.onLoaderWeeksCompleted(weeks);
+    protected void onPostExecute(final Fields weeks) {
+
+        listener.onLoaderHoursCompleted(weeks);
+
     }
 
-    public interface IloadWeeks {
-        void onLoaderWeeksCompleted(Weeks classes);
+    public interface IloadFields {
+        void onLoaderHoursCompleted(Fields fields);
     }
 
     public class LoadWeeksParam {

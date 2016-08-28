@@ -6,7 +6,7 @@ import java.util.List;
 public class Classes {
     private List<Classe> classes = new ArrayList<>();
 
-    public List<Classe> getClasses()  {
+    public List<Classe> getClasses() {
         return classes;
     }
 
@@ -19,7 +19,7 @@ public class Classes {
         return classes.toString();
     }
 
-    public class Classe extends Data{
+    public class Classe extends Data {
         private String name;
         private Integer weeksId;
         private Integer number;

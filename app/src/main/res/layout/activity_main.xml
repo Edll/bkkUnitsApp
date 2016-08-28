@@ -14,20 +14,20 @@
         android:id="@+id/weeksSelecter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
     <Spinner
         android:id="@+id/classSelecter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/weeksSelecter"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/weeksSelecter" />
 
     <ListView
+        android:id="@+id/timeTabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timeTabel"
-        android:layout_below="@+id/classSelecter"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/classSelecter" />
 </RelativeLayout>

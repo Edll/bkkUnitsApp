@@ -6,11 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.List;
@@ -104,16 +101,13 @@ public class ExtendedAdapter extends SimpleAdapter {
                         } else {
                             setViewImage((ImageView) v, text);
                         }
-                    } else if (v instanceof TableLayout) {
-                        if(data instanceof TableRow) {
-
-                            if (((TableRow) data).getParent() != null) {
-                                ViewGroup vg = (ViewGroup) (( TableRow) data).getParent();
-                                vg.removeView((TableRow) data);
-                            }
-
-                                ((TableLayout) v).addView((TableRow) data);
+                    } else if (v instanceof ListView) {
+                        if (data instanceof SimpleAdapter) {
+                            ((ListView) v).setAdapter((SimpleAdapter) data);
+                        } else {
+                            throw new IllegalStateException("Data is not a SimpleAdapter, only this own can bound to a ListView. " + (data == null ? "<null>" : data.getClass().getName()));
                         }
+
                     } else {
                         throw new IllegalStateException(v.getClass().getName() + " is not a " +
                                 " view that can be bounds by this SimpleAdapter");

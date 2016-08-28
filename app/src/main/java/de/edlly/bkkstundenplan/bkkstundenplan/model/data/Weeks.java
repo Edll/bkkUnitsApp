@@ -20,7 +20,7 @@ public class Weeks {
     }
 
 
-    public class Week extends Data{
+    public class Week extends Data {
         private String date;
         private Integer number;
 
