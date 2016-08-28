@@ -105,8 +105,15 @@ public class ExtendedAdapter extends SimpleAdapter {
                             setViewImage((ImageView) v, text);
                         }
                     } else if (v instanceof TableLayout) {
-                        if(data instanceof TableRow)
-                            ((TableLayout) v).addView((TableLayout) data);
+                        if(data instanceof TableRow) {
+
+                            if (((TableRow) data).getParent() != null) {
+                                ViewGroup vg = (ViewGroup) (( TableRow) data).getParent();
+                                vg.removeView((TableRow) data);
+                            }
+
+                                ((TableLayout) v).addView((TableRow) data);
+                        }
                     } else {
                         throw new IllegalStateException(v.getClass().getName() + " is not a " +
                                 " view that can be bounds by this SimpleAdapter");
