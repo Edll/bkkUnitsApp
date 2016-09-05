@@ -13,17 +13,23 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import de.edlly.bkkstundenplan.bkkstundenplan.R;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClasses;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFields;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.FieldStatics;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Fields;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExtendedAdapter;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics;
+
+import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.*;
 
 public class MainActivity extends Activity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadFields.IloadFields, Spinner.OnItemSelectedListener {
     private Spinner weeksSelecter;
@@ -93,29 +99,53 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
 
     @Override
     public void onLoaderHoursCompleted(Fields fields) {
-        Log.w("test", "runFueld");
-        Log.w("test", "size: " + fields.getFields().size());
+
+        // in Tagen Splitten
+        Map<Integer, List<Fields.Field>> days = new TreeMap<>();
         for (Fields.Field field : fields.getFields()) {
-            Log.w("test", field.toString());
+
+            if (days.get(field.getDay()) == null) {
+                List<Fields.Field> fieldList = new ArrayList<>();
+                fieldList.add(field);
+                days.put(field.getDay(), fieldList);
+            } else {
+                List<Fields.Field> fieldList = days.get(field.getDay());
+                fieldList.add(field);
+                days.put(field.getDay(), fieldList);
+            }
         }
 
 
-        List<Map<String, Object>> listAdapta = new ArrayList<>();
-
-        Map<String, Object> mapTest = new HashMap<>();
-        mapTest.put("hour", 1);
-        mapTest.put("fach", "Käse Machen");
-        listAdapta.add(mapTest);
-
-        SimpleAdapter test = new SimpleAdapter(this, listAdapta, R.layout.listview_hours, new String[]{"hour", "fach"}, new int[]{R.id.stunde, R.id.fach});
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("stunden", test);
-        map.put("tag", "Montag");
         List<Map<String, Object>> list = new ArrayList<>();
 
-        list.add(map);
-        ExtendedAdapter adapter = new ExtendedAdapter(this, list, R.layout.listview_timetable, new String[]{"stunden", "tag"}, new int[]{R.id.stunden, R.id.tag});
+        for (Object o : days.entrySet()) {
+            Map.Entry thisEntry = (Map.Entry) o;
+            Integer key = (Integer) thisEntry.getKey();
+            List<Fields.Field> object = (List<Fields.Field>) thisEntry.getValue();
+            Map<String, Object> map = new HashMap<>();
+
+            List<Map<String, Object>> listAdapta = new ArrayList<>();
+
+            for(Fields.Field fieldData :  object){
+                if(fieldData.getDataTyp() == 1) {
+                    Map<String, Object> mapTest = new HashMap<>();
+                    mapTest.put(HOUR, fieldData.getHour());
+                    mapTest.put(FACH, fieldData.getData());
+                    listAdapta.add(mapTest);
+                }
+
+            }
+
+            SimpleAdapter test = new SimpleAdapter(this, listAdapta, R.layout.listview_hours, new String[]{HOUR, FACH}, new int[]{R.id.stunde, R.id.fach});
+
+
+             map.put(STUNDEN, test);
+
+            map.put(TAG, FieldStatics.getDayName(key));
+            list.add(map);
+        }
+
+        ExtendedAdapter adapter = new ExtendedAdapter(this, list, R.layout.listview_timetable, new String[]{STUNDEN, TAG}, new int[]{R.id.stunden, R.id.tag});
 
         stunden.setAdapter(adapter);
     }

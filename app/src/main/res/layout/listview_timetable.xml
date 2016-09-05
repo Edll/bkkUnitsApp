@@ -19,10 +19,9 @@
         android:layout_marginBottom="3dp"
         android:background="@android:color/white" />
 
-    <ListView
+    <de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExpandedListView
         android:id="@+id/stunden"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tagLinie"></ListView>
-
+        android:layout_below="@id/tagLinie" />
 </RelativeLayout>
