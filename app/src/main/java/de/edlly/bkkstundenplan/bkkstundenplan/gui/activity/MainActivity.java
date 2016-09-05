@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 import de.edlly.bkkstundenplan.bkkstundenplan.R;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClasses;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClassesParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFields;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
@@ -50,11 +51,9 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
         LoadWeeks.LoadWeeksParam param;
         new LoadWeeks(this, this).execute();
 
-        LoadClasses.LoadClassesParam param1;
 
-        new LoadClasses(this, this).execute();
 
-        LoadClasses.LoadClassesParam param2;
+      //  LoadClasses.LoadClassesParam param2;
 
         new LoadFields(this, this).execute();
 
@@ -74,7 +73,16 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        //   Log.w("test", view.toString());
+
+        switch (adapterView.getId()){
+            case R.id.weeksSelecter:
+                LoadClassesParam param1 = new LoadClassesParam("2", "this");
+                 new LoadClasses(this, this).execute(param1);
+                Log.w("test", view.toString());
+                break;
+        }
+
+
     }
 
     @Override

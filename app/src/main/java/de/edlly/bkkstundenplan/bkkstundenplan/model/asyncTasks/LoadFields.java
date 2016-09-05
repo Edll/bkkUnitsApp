@@ -81,14 +81,15 @@ public class LoadFields extends AsyncTask<LoadFields.LoadWeeksParam, Long, Field
     }
 
     public class LoadWeeksParam {
-        private String week;
+        private String fieldId;
+        private String classId;
 
-        public String getWeek() {
-            return week;
+        public String getClassId() {
+            return classId;
         }
 
-        public void setWeek(String week) {
-            this.week = week;
+        public String getFieldId() {
+            return fieldId;
         }
     }
 }

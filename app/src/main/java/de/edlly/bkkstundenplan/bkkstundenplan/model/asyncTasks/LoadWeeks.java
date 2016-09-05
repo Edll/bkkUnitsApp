@@ -79,6 +79,10 @@ public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> 
     }
 
     public class LoadWeeksParam {
+        public LoadWeeksParam(String week) {
+            this.week = week;
+        }
+
         private String week;
 
         public String getWeek() {
