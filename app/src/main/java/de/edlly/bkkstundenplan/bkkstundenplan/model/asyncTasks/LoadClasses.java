@@ -44,7 +44,6 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
 
 
                 if ("application/json".equals(contenType)) {
-                    conn.setRequestMethod("GET");
 
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuilder stringBuilder = new StringBuilder();
