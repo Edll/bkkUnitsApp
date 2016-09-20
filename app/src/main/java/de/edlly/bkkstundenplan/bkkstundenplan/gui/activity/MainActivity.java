@@ -13,7 +13,6 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,21 +20,29 @@ import java.util.TreeMap;
 import de.edlly.bkkstundenplan.bkkstundenplan.R;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClasses;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClassesParam;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFieldParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFields;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.FieldStatics;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Fields;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExtendedAdapter;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics;
 
-import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.*;
+import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.FACH;
+import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.HOUR;
+import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.STUNDEN;
+import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.TAG;
 
 public class MainActivity extends Activity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadFields.IloadFields, Spinner.OnItemSelectedListener {
     private Spinner weeksSelecter;
     private Spinner classSelecter;
     private ListView stunden;
+
+    private Weeks weeks;
+    private Classes classes;
+    private String weeksId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,40 +52,45 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
         weeksSelecter = (Spinner) findViewById(R.id.weeksSelecter);
         weeksSelecter.setOnItemSelectedListener(this);
         classSelecter = (Spinner) findViewById(R.id.classSelecter);
+        classSelecter.setOnItemSelectedListener(this);
         stunden = (ListView) findViewById(R.id.timeTabel);
 
 
         LoadWeeks.LoadWeeksParam param;
         new LoadWeeks(this, this).execute();
-
-
-
-      //  LoadClasses.LoadClassesParam param2;
-
-        new LoadFields(this, this).execute();
-
-
     }
 
-    @Override
-    public void onLoaderClassesCompleted(Classes classes) {
-        List<String> list = new ArrayList<>();
-        for (Classes.Classe week : classes.getClasses()) {
-            list.add(week.getName());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        classSelecter.setAdapter(adapter);
-    }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-        switch (adapterView.getId()){
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        switch (parent.getId()) {
             case R.id.weeksSelecter:
-                LoadClassesParam param1 = new LoadClassesParam("2", "this");
-                 new LoadClasses(this, this).execute(param1);
-                Log.w("test", view.toString());
+
+                String result = parent.getItemAtPosition(pos).toString();
+
+                weeksId = null;
+                try {
+                    weeksId = weeks.findWeeksId(result);
+                } catch (DataLoadException e) {
+                    e.printStackTrace();
+                }
+
+                LoadClassesParam param1 = new LoadClassesParam(weeksId, "this");
+                new LoadClasses(this, this).execute(param1);
+                break;
+            case R.id.classSelecter:
+
+                String result2 = parent.getItemAtPosition(pos).toString();
+
+                String classId = null;
+                try {
+                    classId = classes.findClassId(result2, weeksId);
+                } catch (DataLoadException e) {
+                    e.printStackTrace();
+                }
+
+                LoadFieldParam param2 = new LoadFieldParam(weeksId, classId);
+                new LoadFields(this, this).execute(param2);
                 break;
         }
 
@@ -91,23 +103,37 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
     }
 
     @Override
-    public void onLoaderWeeksCompleted(Weeks weeks) {
-
-        List<String> list = new ArrayList<>();
-        for (Weeks.Week week : weeks.getWeeks()) {
-            list.add(week.getDate());
+    public void onLoaderClassesCompleted(Classes classes) {
+        this.classes = classes;
+        if(classes != null) {
+            List<String> list = new ArrayList<>();
+            for (Classes.Classe week : classes.getClasses()) {
+                list.add(week.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            classSelecter.setAdapter(adapter);
         }
+    }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    @Override
+    public void onLoaderWeeksCompleted(Weeks weeks) {
+        if(weeks != null) {
+        this.weeks = weeks;
+        List<String> list = new ArrayList<>();
 
+            for (Weeks.Week week : weeks.getWeeks()) {
+                list.add(week.getDate());
+            }
 
-        weeksSelecter.setAdapter(adapter);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            weeksSelecter.setAdapter(adapter);
+        }
     }
 
     @Override
     public void onLoaderHoursCompleted(Fields fields) {
-
         // in Tagen Splitten
         Map<Integer, List<Fields.Field>> days = new TreeMap<>();
         for (Fields.Field field : fields.getFields()) {
@@ -134,10 +160,14 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
 
             List<Map<String, Object>> listAdapta = new ArrayList<>();
 
-            for(Fields.Field fieldData :  object){
-                if(fieldData.getDataTyp() == 1) {
+            for (Fields.Field fieldData : object) {
+                if (fieldData.getDataTyp() == 1 || fieldData.getDataTyp() == 2) {
                     Map<String, Object> mapTest = new HashMap<>();
-                    mapTest.put(HOUR, fieldData.getHour());
+                    if(fieldData.getDataTyp() == 1) {
+                        mapTest.put(HOUR, fieldData.getHour());
+                    }else{
+                        mapTest.put(HOUR, "");
+                    }
                     mapTest.put(FACH, fieldData.getData());
                     listAdapta.add(mapTest);
                 }
@@ -147,7 +177,7 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
             SimpleAdapter test = new SimpleAdapter(this, listAdapta, R.layout.listview_hours, new String[]{HOUR, FACH}, new int[]{R.id.stunde, R.id.fach});
 
 
-             map.put(STUNDEN, test);
+            map.put(STUNDEN, test);
 
             map.put(TAG, FieldStatics.getDayName(key));
             list.add(map);

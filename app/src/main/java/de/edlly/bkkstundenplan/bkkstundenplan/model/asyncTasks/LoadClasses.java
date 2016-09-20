@@ -2,6 +2,7 @@ package de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -24,11 +25,14 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
     }
 
     @Override
-    protected Classes doInBackground(LoadClassesParam... params) {
+    protected Classes doInBackground(LoadClassesParam... classesParams) {
         Classes classes = null;
 
-        for (LoadClassesParam weeksParam : params) {
-            String uri = UriStatics.getClassUrl(weeksParam.getClassId(), weeksParam.getWeekId());
+        for (LoadClassesParam classesParam : classesParams) {
+
+            Log.w("test", "Load Class ClasseId: " + classesParam.getClassId());
+            Log.w("test", "Load Class WeeksId: " + classesParam.getWeekId());
+            String uri = UriStatics.getClassUrl(classesParam.getClassId(), classesParam.getWeekId());
             try {
                 URL url = new URL(uri);
 

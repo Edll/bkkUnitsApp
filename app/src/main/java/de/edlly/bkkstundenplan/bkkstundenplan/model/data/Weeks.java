@@ -19,6 +19,15 @@ public class Weeks {
         return weeks.toString();
     }
 
+    public String findWeeksId(String result) throws DataLoadException {
+        for(Week week : weeks){
+            if(week.getDate().equals(result)){
+                return week.getId().toString();
+            }
+        }
+        throw new DataLoadException("Es konnte keine Woche mit dem Datum: " + result + " gefunden werden.");
+    }
+
 
     public class Week extends Data {
         private String date;

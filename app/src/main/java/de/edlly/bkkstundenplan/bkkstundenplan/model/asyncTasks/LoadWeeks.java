@@ -35,8 +35,6 @@ public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> 
             String contenType = conn.getContentType();
 
             if ("application/json".equals(contenType)) {
-                conn.setRequestMethod("GET");
-
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder();
 
