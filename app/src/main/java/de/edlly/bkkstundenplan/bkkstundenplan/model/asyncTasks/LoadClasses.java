@@ -36,18 +36,17 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
             try {
                 URL url = new URL(uri);
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.connect();
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.connect();
 
-                String contenType = conn.getContentType();
+                String contenType = httpURLConnection.getContentType();
 
 
                 if ("application/json".equals(contenType)) {
 
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                     StringBuilder stringBuilder = new StringBuilder();
-
 
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {
@@ -60,12 +59,11 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
                     classes = new Gson().fromJson(data, Classes.class);
                 }
             } catch (IOException e) {
+                // TODO: Fehler melden beim laden der Daten!
                 e.printStackTrace();
             }
 
         }
-
-
         return classes;
     }
 
