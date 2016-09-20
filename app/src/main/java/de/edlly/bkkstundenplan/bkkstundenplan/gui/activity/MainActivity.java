@@ -3,7 +3,6 @@ package de.edlly.bkkstundenplan.bkkstundenplan.gui.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,16 +47,18 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setupView();
+        loadWeeks();
+    }
+
+
+    private void setupView() {
         setContentView(R.layout.activity_main);
         weeksSelecter = (Spinner) findViewById(R.id.weeksSelecter);
         weeksSelecter.setOnItemSelectedListener(this);
         classSelecter = (Spinner) findViewById(R.id.classSelecter);
         classSelecter.setOnItemSelectedListener(this);
         stunden = (ListView) findViewById(R.id.timeTabel);
-
-
-        LoadWeeks.LoadWeeksParam param;
-        new LoadWeeks(this, this).execute();
     }
 
 
@@ -68,59 +69,59 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
 
                 String result = parent.getItemAtPosition(pos).toString();
 
-                weeksId = null;
-                try {
-                    weeksId = weeks.findWeeksId(result);
-                } catch (DataLoadException e) {
-                    e.printStackTrace();
-                }
-
-                LoadClassesParam param1 = new LoadClassesParam(weeksId, "this");
-                new LoadClasses(this, this).execute(param1);
+                loadClasses(result);
                 break;
             case R.id.classSelecter:
 
                 String result2 = parent.getItemAtPosition(pos).toString();
 
-                String classId = null;
-                try {
-                    classId = classes.findClassId(result2, weeksId);
-                } catch (DataLoadException e) {
-                    e.printStackTrace();
-                }
-
-                LoadFieldParam param2 = new LoadFieldParam(weeksId, classId);
-                new LoadFields(this, this).execute(param2);
+                loadFields(result2);
                 break;
         }
 
 
     }
 
+    private void loadWeeks() {
+        new LoadWeeks(this, this).execute();
+    }
+
+    private void loadClasses(String result) {
+        weeksId = null;
+        try {
+            weeksId = weeks.findWeeksId(result);
+        } catch (DataLoadException e) {
+            e.printStackTrace();
+        }
+
+        LoadClassesParam classesParam = new LoadClassesParam(weeksId, "this");
+        new LoadClasses(this, this).execute(classesParam);
+    }
+
+    private void loadFields(String result2) {
+        String classId = null;
+        try {
+            classId = classes.findClassId(result2, weeksId);
+        } catch (DataLoadException e) {
+            e.printStackTrace();
+        }
+
+        LoadFieldParam fieldParam = new LoadFieldParam(weeksId, classId);
+        new LoadFields(this, this).execute(fieldParam);
+    }
+
+
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        // TODO: Standart daten lassen!
         //   Log.w("test", adapterView.toString());
     }
 
     @Override
-    public void onLoaderClassesCompleted(Classes classes) {
-        this.classes = classes;
-        if(classes != null) {
-            List<String> list = new ArrayList<>();
-            for (Classes.Classe week : classes.getClasses()) {
-                list.add(week.getName());
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            classSelecter.setAdapter(adapter);
-        }
-    }
-
-    @Override
     public void onLoaderWeeksCompleted(Weeks weeks) {
-        if(weeks != null) {
-        this.weeks = weeks;
-        List<String> list = new ArrayList<>();
+        if (weeks != null) {
+            this.weeks = weeks;
+            List<String> list = new ArrayList<>();
 
             for (Weeks.Week week : weeks.getWeeks()) {
                 list.add(week.getDate());
@@ -129,6 +130,20 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             weeksSelecter.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onLoaderClassesCompleted(Classes classes) {
+        this.classes = classes;
+        if (classes != null) {
+            List<String> list = new ArrayList<>();
+            for (Classes.Classe week : classes.getClasses()) {
+                list.add(week.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            classSelecter.setAdapter(adapter);
         }
     }
 
@@ -163,9 +178,9 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
             for (Fields.Field fieldData : object) {
                 if (fieldData.getDataTyp() == 1 || fieldData.getDataTyp() == 2) {
                     Map<String, Object> mapTest = new HashMap<>();
-                    if(fieldData.getDataTyp() == 1) {
+                    if (fieldData.getDataTyp() == 1) {
                         mapTest.put(HOUR, fieldData.getHour());
-                    }else{
+                    } else {
                         mapTest.put(HOUR, "");
                     }
                     mapTest.put(FACH, fieldData.getData());
@@ -178,7 +193,6 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
 
 
             map.put(STUNDEN, test);
-
             map.put(TAG, FieldStatics.getDayName(key));
             list.add(map);
         }
