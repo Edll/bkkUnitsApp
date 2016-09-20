@@ -27,8 +27,7 @@ public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> 
     protected Weeks doInBackground(LoadWeeksParam... loadWeeksParams) {
         Weeks weeks = null;
         try {
-            URL url = new URL("http://10.0.2.2/bkk/jsonoutput.php?week=all");
-            // URL url = new URL("http://www.edlly.de/bkk/jsonoutput.php?week=all");
+            URL url = new URL(UriStatics.getWeeksUrlAll());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();

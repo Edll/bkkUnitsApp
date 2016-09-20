@@ -27,8 +27,7 @@ public class LoadFields extends AsyncTask<LoadFields.LoadWeeksParam, Long, Field
     protected Fields doInBackground(LoadWeeksParam... loadWeeksParams) {
         Fields fields = null;
         try {
-            URL url = new URL("http://10.0.2.2/bkk/jsonoutput.php?field=1&class=61");
-            //  URL url = new URL("http://edlly.de/bkk/jsonoutput.php?field=2&class=135");
+            URL url = new URL(UriStatics.getFieldUrl("1", "1"));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
