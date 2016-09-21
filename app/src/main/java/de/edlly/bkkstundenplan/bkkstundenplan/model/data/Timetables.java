@@ -1,6 +1,9 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.data;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,21 +44,32 @@ public class Timetables {
     public static List<Map<String, Object>> getHoursPlanOfActualDay(List<Timetable> actualDay) {
         List<Map<String, Object>> dayTimeTable = new ArrayList<>();
 
+        Collections.sort(actualDay);
+
+        Map<Integer, String> sortedDateMap = new TreeMap<>();
+
         for (Timetable actualHour : actualDay) {
-
-            // TODO: Sortierung ändern plan übersicht verbessern!
-            if (actualHour.getDataTyp() == 1 || actualHour.getDataTyp() == 2) {
-                Map<String, Object> timeTable = new HashMap<>();
-                if (actualHour.getDataTyp() == 1) {
-                    timeTable.put(HOUR, actualHour.getHour());
-                } else {
-                    timeTable.put(HOUR, "");
-                }
-                timeTable.put(FACH, actualHour.getData());
-                dayTimeTable.add(timeTable);
+            Integer hour = actualHour.getHour();
+            if (sortedDateMap.containsKey(hour)) {
+                String actual = sortedDateMap.get(hour);
+                actual = actual + ", " + actualHour.getData();
+                sortedDateMap.put(hour, actual);
+            } else {
+                sortedDateMap.put(hour, actualHour.getData());
             }
-
         }
+
+
+        for (Map.Entry<Integer, String> actualHour : sortedDateMap.entrySet()) {
+
+            Map<String, Object> timeTable = new HashMap<>();
+
+            timeTable.put(HOUR, actualHour.getKey());
+
+            timeTable.put(FACH, actualHour.getValue());
+            dayTimeTable.add(timeTable);
+        }
+
         return dayTimeTable;
     }
 
@@ -66,7 +80,7 @@ public class Timetables {
                 '}';
     }
 
-    public class Timetable extends Data {
+    public class Timetable extends Data implements Comparable<Timetable> {
         private String data;
         private Integer dataTyp;
         private Integer hour;
@@ -113,6 +127,23 @@ public class Timetables {
                     ", day=" + day +
                     '}';
 
+        }
+
+        @Override
+        public int compareTo(@NonNull Timetable o) {
+            if (this.getHour().equals(o.getHour())) {
+                if (this.getDataTyp() < o.getDataTyp()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            } else {
+                if (this.getHour() < o.getHour()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
         }
     }
 }
