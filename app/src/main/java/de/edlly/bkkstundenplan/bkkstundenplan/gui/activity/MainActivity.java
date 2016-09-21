@@ -21,6 +21,7 @@ import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClassesParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetable;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetableParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeksParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Statics;
@@ -84,7 +85,8 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
     }
 
     private void loadWeeks() {
-        new LoadWeeks(this, this).execute();
+        LoadWeeksParam loadWeeksParam = new LoadWeeksParam("all");
+        new LoadWeeks(this).execute(loadWeeksParam);
     }
 
     @Override
@@ -138,7 +140,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
         }
 
         LoadTimetableParam fieldParam = new LoadTimetableParam(weeksId, classId);
-        new LoadTimetable(this, this).execute(fieldParam);
+        new LoadTimetable(this).execute(fieldParam);
     }
 
 

@@ -8,9 +8,9 @@ abstract class UriStatics {
     //http://www.edlly.de/bkk/
     final static String URL = "http://www.edlly.de/bkk/";
 
-    static String getWeeksUrlAll(){
+    static String getWeeksUrl(String weeksId){
         Log.w("test", "getWeeksUrlAll: " + URL + "jsonoutput.php?week=all");
-        return URL + "jsonoutput.php?week=all";
+        return URL + "jsonoutput.php?week=" + weeksId;
     }
 
     static String getClassUrl(String classId, String weekId) {

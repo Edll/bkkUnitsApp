@@ -1,7 +1,6 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks;
 
 public class LoadTimetableParam {
-
     private String fieldId;
     private String classId;
 
@@ -10,11 +9,11 @@ public class LoadTimetableParam {
         this.classId = classId;
     }
 
-    public String getClassId() {
+    String getClassId() {
         return classId;
     }
 
-    public String getFieldId() {
+    String getFieldId() {
         return fieldId;
     }
 

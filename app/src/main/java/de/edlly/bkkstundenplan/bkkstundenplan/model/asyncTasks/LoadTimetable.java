@@ -1,76 +1,56 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Timetables;
 
 public class LoadTimetable extends AsyncTask<LoadTimetableParam, Long, Timetables> {
     private IloadTimetable listener;
-    private Context context;
+    private DataLoader dataLoader = new DataLoader();
 
-    public LoadTimetable(IloadTimetable listener, Context context) {
+    public LoadTimetable(IloadTimetable listener) {
         this.listener = listener;
-        this.context = context;
     }
-
 
     @Override
     protected Timetables doInBackground(LoadTimetableParam... loadWeeksParams) {
         Timetables timetables = null;
-        for(LoadTimetableParam weeksParam : loadWeeksParams) {
-            try {
-                Log.w("test", "Load Timetable ClassId: " +  weeksParam.getClassId());
-                Log.w("test", "Load Timetable FieldId: " +  weeksParam.getFieldId());
-                URL url = new URL(UriStatics.getFieldUrl(weeksParam.getClassId(), weeksParam.getFieldId()));
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.connect();
 
-                String contenType = conn.getContentType();
+        for (LoadTimetableParam weeksParam : loadWeeksParams) {
 
-                if ("application/json".equals(contenType)) {
+            String uri = UriStatics.getFieldUrl(weeksParam.getClassId(), weeksParam.getFieldId());
 
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
+            dataLoader.getJsonData(uri);
 
-
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                    bufferedReader.close();
-
-                    String data = stringBuilder.toString();
-
-                    Log.w("test", "doInBackground: " + data);
-                    timetables = new Gson().fromJson(data, Timetables.class);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            String jsonData = dataLoader.getJsonData();
+            if (jsonData != null) {
+                timetables = new Gson().fromJson(jsonData, Timetables.class);
+            } else {
+                dataLoader.setError("Es konnte die Json Daten für den " +
+                        "Stundenplan nicht geladen werden.");
             }
         }
-        return timetables;
 
+        return timetables;
     }
 
     @Override
-    protected void onPostExecute(final Timetables weeks) {
+    protected void onPostExecute(final Timetables timetables) {
+        if (timetables == null) {
+            listener.onException("Es konnten kein Stundenplan geladen werden.");
+            return;
+        }
 
-        listener.onLoaderTimetableCompleted(weeks);
-
+        if (dataLoader.getError() != null) {
+            listener.onException(dataLoader.getError());
+            return;
+        }
+        listener.onLoaderTimetableCompleted(timetables);
     }
 
-    public interface IloadTimetable {
+    public interface IloadTimetable extends Iload {
         void onLoaderTimetableCompleted(Timetables timetables);
     }
 

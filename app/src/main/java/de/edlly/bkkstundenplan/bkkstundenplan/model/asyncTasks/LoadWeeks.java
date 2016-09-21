@@ -1,93 +1,55 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
 
-public class LoadWeeks extends AsyncTask<LoadWeeks.LoadWeeksParam, Long, Weeks> {
+public class LoadWeeks extends AsyncTask<LoadWeeksParam, Long, Weeks> {
     private IloadWeeks listener;
-    private Context context;
+    private DataLoader dataLoader = new DataLoader();
 
-    public LoadWeeks(IloadWeeks listener, Context context) {
+    public LoadWeeks(IloadWeeks listener) {
         this.listener = listener;
-        this.context = context;
     }
-
 
     @Override
     protected Weeks doInBackground(LoadWeeksParam... loadWeeksParams) {
         Weeks weeks = null;
-        try {
-            URL url = new URL(UriStatics.getWeeksUrlAll());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.connect();
-
-            String contenType = conn.getContentType();
-
-            if ("application/json".equals(contenType)) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder();
-
-
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-                bufferedReader.close();
-
-                String data = stringBuilder.toString();
-                weeks = new Gson().fromJson(data, Weeks.class);
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         for (LoadWeeksParam weeksParam : loadWeeksParams) {
 
-            // auslesen des Json Array
+            String uri = UriStatics.getWeeksUrl(weeksParam.getWeek());
+            dataLoader.getJsonData(uri);
 
-            // schreiben des Json in classe
-
+            String jsonData = dataLoader.getJsonData();
+            if (jsonData != null) {
+                weeks = new Gson().fromJson(jsonData, Weeks.class);
+            } else {
+                dataLoader.setError("Es konnte die Json Daten für " +
+                        "die Wochen nicht geladen werden.");
+            }
         }
-
         return weeks;
 
     }
 
     @Override
     protected void onPostExecute(final Weeks weeks) {
+        super.onPostExecute(weeks);
+        if (weeks == null) {
+            listener.onException("Es konnten keine Wochen geladen werden.");
+            return;
+        }
+
+        if (dataLoader.getError() != null) {
+            listener.onException(dataLoader.getError());
+            return;
+        }
         listener.onLoaderWeeksCompleted(weeks);
     }
 
-    public interface IloadWeeks {
+    public interface IloadWeeks extends Iload {
         void onLoaderWeeksCompleted(Weeks classes);
-    }
-
-    public class LoadWeeksParam {
-        public LoadWeeksParam(String week) {
-            this.week = week;
-        }
-
-        private String week;
-
-        public String getWeek() {
-            return week;
-        }
-
-        public void setWeek(String week) {
-            this.week = week;
-        }
     }
 }

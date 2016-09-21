@@ -19,6 +19,10 @@ class DataLoader {
         return jsonData;
     }
 
+    public void setError(String error) {
+        this.error = error;
+    }
+
     void getJsonData(String uri) {
         try {
             URL url = new URL(uri);

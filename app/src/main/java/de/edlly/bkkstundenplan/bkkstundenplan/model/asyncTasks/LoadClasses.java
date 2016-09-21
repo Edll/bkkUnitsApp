@@ -10,7 +10,6 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
     private IloadClasses listener;
     private DataLoader dataLoader = new DataLoader();
 
-
     public LoadClasses(IloadClasses listener) {
         this.listener = listener;
     }
@@ -27,6 +26,9 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
             String jsonData = dataLoader.getJsonData();
             if (jsonData != null) {
                 classes = new Gson().fromJson(jsonData, Classes.class);
+            } else {
+                dataLoader.setError("Es konnte die Json Daten für " +
+                        "die Klasse nicht geladen werden.");
             }
         }
         return classes;
