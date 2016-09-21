@@ -13,4 +13,10 @@
         android:title="@string/neuladen"
         app:showAsAction="always"
         android:showAsAction="always"/>
+
+    <item android:id="@+id/action_help"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/hilfe"
+        app:showAsAction="always"
+        android:showAsAction="always"/>
 </menu>
