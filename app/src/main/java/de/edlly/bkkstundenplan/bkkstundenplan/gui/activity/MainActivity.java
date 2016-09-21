@@ -99,8 +99,8 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
                 list.add(week.getDate());
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.simpel_spinner_item, list);
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             weeksSelecter.setAdapter(adapter);
         }
     }
@@ -125,8 +125,8 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             for (Classes.Classe week : classes.getClasses()) {
                 list.add(week.getName());
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, list);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.simpel_spinner_item, list);
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             classSelecter.setAdapter(adapter);
         }
     }

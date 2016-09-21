@@ -23,5 +23,6 @@
         android:id="@+id/stunden"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tagLinie" />
+        android:layout_below="@id/tagLinie"
+        android:dividerHeight="0dp"/>
 </RelativeLayout>
