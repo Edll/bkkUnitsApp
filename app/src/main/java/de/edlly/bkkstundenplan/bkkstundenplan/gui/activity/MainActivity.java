@@ -3,6 +3,7 @@ package de.edlly.bkkstundenplan.bkkstundenplan.gui.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,18 +15,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import de.edlly.bkkstundenplan.bkkstundenplan.R;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClasses;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClassesParam;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFieldParam;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadFields;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetableParam;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetable;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.FieldStatics;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Fields;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Timetables;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExtendedAdapter;
 
@@ -34,7 +34,7 @@ import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.HOU
 import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.STUNDEN;
 import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.TAG;
 
-public class MainActivity extends Activity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadFields.IloadFields, Spinner.OnItemSelectedListener {
+public class MainActivity extends Activity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadTimetable.IloadTimetable, Spinner.OnItemSelectedListener {
     private Spinner weeksSelecter;
     private Spinner classSelecter;
     private ListView stunden;
@@ -67,54 +67,25 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
         switch (parent.getId()) {
             case R.id.weeksSelecter:
 
-                String result = parent.getItemAtPosition(pos).toString();
-
-                loadClasses(result);
+                String weekDate = parent.getItemAtPosition(pos).toString();
+                loadClasses(weekDate);
                 break;
             case R.id.classSelecter:
 
-                String result2 = parent.getItemAtPosition(pos).toString();
-
-                loadFields(result2);
+                String className = parent.getItemAtPosition(pos).toString();
+                loadTimetable(weeksId, className);
                 break;
         }
-
-
     }
-
-    private void loadWeeks() {
-        new LoadWeeks(this, this).execute();
-    }
-
-    private void loadClasses(String result) {
-        weeksId = null;
-        try {
-            weeksId = weeks.findWeeksId(result);
-        } catch (DataLoadException e) {
-            e.printStackTrace();
-        }
-
-        LoadClassesParam classesParam = new LoadClassesParam(weeksId, "this");
-        new LoadClasses(this, this).execute(classesParam);
-    }
-
-    private void loadFields(String result2) {
-        String classId = null;
-        try {
-            classId = classes.findClassId(result2, weeksId);
-        } catch (DataLoadException e) {
-            e.printStackTrace();
-        }
-
-        LoadFieldParam fieldParam = new LoadFieldParam(weeksId, classId);
-        new LoadFields(this, this).execute(fieldParam);
-    }
-
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         // TODO: Standart daten lassen!
         //   Log.w("test", adapterView.toString());
+    }
+
+    private void loadWeeks() {
+        new LoadWeeks(this, this).execute();
     }
 
     @Override
@@ -133,6 +104,18 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
         }
     }
 
+    private void loadClasses(String weekDate) {
+        weeksId = null;
+        try {
+            weeksId = weeks.findWeeksId(weekDate);
+        } catch (DataLoadException e) {
+            e.printStackTrace();
+        }
+
+        LoadClassesParam classesParam = new LoadClassesParam(weeksId, "this");
+        new LoadClasses(this, this).execute(classesParam);
+    }
+
     @Override
     public void onLoaderClassesCompleted(Classes classes) {
         this.classes = classes;
@@ -147,58 +130,74 @@ public class MainActivity extends Activity implements LoadClasses.IloadClasses, 
         }
     }
 
+    private void loadTimetable(String weeksId, String className) {
+        String classId = null;
+        try {
+            classId = classes.findClassId(className, weeksId);
+        } catch (DataLoadException e) {
+            e.printStackTrace();
+        }
+
+        LoadTimetableParam fieldParam = new LoadTimetableParam(weeksId, classId);
+        new LoadTimetable(this, this).execute(fieldParam);
+    }
+
+
     @Override
-    public void onLoaderHoursCompleted(Fields fields) {
-        // in Tagen Splitten
-        Map<Integer, List<Fields.Field>> days = new TreeMap<>();
-        for (Fields.Field field : fields.getFields()) {
-
-            if (days.get(field.getDay()) == null) {
-                List<Fields.Field> fieldList = new ArrayList<>();
-                fieldList.add(field);
-                days.put(field.getDay(), fieldList);
-            } else {
-                List<Fields.Field> fieldList = days.get(field.getDay());
-                fieldList.add(field);
-                days.put(field.getDay(), fieldList);
-            }
+    public void onLoaderTimetableCompleted(Timetables timetables) {
+        if (timetables != null) {
+            List<Map<String, Object>> weekTimeTable = getWeeksTimetable(timetables);
+            setWeekTimetable(weekTimeTable);
         }
+    }
 
+    private List<Map<String, Object>> getWeeksTimetable(Timetables timetables) {
+        Map<Integer, List<Timetables.Timetable>> days = timetables.getDays();
 
-        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map<String, Object>> weekTimeTable = new ArrayList<>();
+        for (Map.Entry<Integer, List<Timetables.Timetable>> actualDays : days.entrySet()) {
 
-        for (Object o : days.entrySet()) {
-            Map.Entry thisEntry = (Map.Entry) o;
-            Integer key = (Integer) thisEntry.getKey();
-            List<Fields.Field> object = (List<Fields.Field>) thisEntry.getValue();
-            Map<String, Object> map = new HashMap<>();
+            SimpleAdapter timeTableAdapter = createDayTimeTable(actualDays);
 
-            List<Map<String, Object>> listAdapta = new ArrayList<>();
+            Map<String, Object> dayList = new HashMap<>();
+            dayList.put(STUNDEN, timeTableAdapter);
 
-            for (Fields.Field fieldData : object) {
-                if (fieldData.getDataTyp() == 1 || fieldData.getDataTyp() == 2) {
-                    Map<String, Object> mapTest = new HashMap<>();
-                    if (fieldData.getDataTyp() == 1) {
-                        mapTest.put(HOUR, fieldData.getHour());
-                    } else {
-                        mapTest.put(HOUR, "");
-                    }
-                    mapTest.put(FACH, fieldData.getData());
-                    listAdapta.add(mapTest);
-                }
-
-            }
-
-            SimpleAdapter test = new SimpleAdapter(this, listAdapta, R.layout.listview_hours, new String[]{HOUR, FACH}, new int[]{R.id.stunde, R.id.fach});
-
-
-            map.put(STUNDEN, test);
-            map.put(TAG, FieldStatics.getDayName(key));
-            list.add(map);
+            Integer dayNumber = actualDays.getKey();
+            dayList.put(TAG, FieldStatics.getDayName(dayNumber));
+            weekTimeTable.add(dayList);
         }
+        return weekTimeTable;
+    }
 
-        ExtendedAdapter adapter = new ExtendedAdapter(this, list, R.layout.listview_timetable, new String[]{STUNDEN, TAG}, new int[]{R.id.stunden, R.id.tag});
+    private SimpleAdapter createDayTimeTable(Map.Entry<Integer, List<Timetables.Timetable>> actualDays) {
+        List<Timetables.Timetable> actualDay = actualDays.getValue();
+        List<Map<String, Object>> dayTimeTable = Timetables.getHoursPlanOfActualDay(actualDay);
+
+        return new SimpleAdapter(
+                this,
+                dayTimeTable,
+                R.layout.listview_hours,
+                new String[]{
+                        HOUR,
+                        FACH},
+                new int[]{
+                        R.id.stunde,
+                        R.id.fach});
+    }
+
+    private void setWeekTimetable(List<Map<String, Object>> weekTimeTable) {
+        ExtendedAdapter adapter = new ExtendedAdapter(
+                this,
+                weekTimeTable,
+                R.layout.listview_timetable,
+                new String[]{
+                        TAG,
+                        STUNDEN},
+                new int[]{
+                        R.id.tag,
+                        R.id.stunden});
 
         stunden.setAdapter(adapter);
     }
+
 }

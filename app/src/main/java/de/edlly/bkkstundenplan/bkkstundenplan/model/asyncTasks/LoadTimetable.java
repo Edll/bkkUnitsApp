@@ -12,25 +12,25 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Fields;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Timetables;
 
-public class LoadFields extends AsyncTask<LoadFieldParam, Long, Fields> {
-    private IloadFields listener;
+public class LoadTimetable extends AsyncTask<LoadTimetableParam, Long, Timetables> {
+    private IloadTimetable listener;
     private Context context;
 
-    public LoadFields(IloadFields listener, Context context) {
+    public LoadTimetable(IloadTimetable listener, Context context) {
         this.listener = listener;
         this.context = context;
     }
 
 
     @Override
-    protected Fields doInBackground(LoadFieldParam... loadWeeksParams) {
-        Fields fields = null;
-        for(LoadFieldParam weeksParam : loadWeeksParams) {
+    protected Timetables doInBackground(LoadTimetableParam... loadWeeksParams) {
+        Timetables timetables = null;
+        for(LoadTimetableParam weeksParam : loadWeeksParams) {
             try {
-                Log.w("test", "Load Field ClassId: " +  weeksParam.getClassId());
-                Log.w("test", "Load Field FieldId: " +  weeksParam.getFieldId());
+                Log.w("test", "Load Timetable ClassId: " +  weeksParam.getClassId());
+                Log.w("test", "Load Timetable FieldId: " +  weeksParam.getFieldId());
                 URL url = new URL(UriStatics.getFieldUrl(weeksParam.getClassId(), weeksParam.getFieldId()));
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -52,25 +52,26 @@ public class LoadFields extends AsyncTask<LoadFieldParam, Long, Fields> {
 
                     String data = stringBuilder.toString();
 
-                    fields = new Gson().fromJson(data, Fields.class);
+                    Log.w("test", "doInBackground: " + data);
+                    timetables = new Gson().fromJson(data, Timetables.class);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return fields;
+        return timetables;
 
     }
 
     @Override
-    protected void onPostExecute(final Fields weeks) {
+    protected void onPostExecute(final Timetables weeks) {
 
-        listener.onLoaderHoursCompleted(weeks);
+        listener.onLoaderTimetableCompleted(weeks);
 
     }
 
-    public interface IloadFields {
-        void onLoaderHoursCompleted(Fields fields);
+    public interface IloadTimetable {
+        void onLoaderTimetableCompleted(Timetables timetables);
     }
 
 }
