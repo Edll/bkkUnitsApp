@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_class_fav"
+        android:icon="@android:drawable/btn_star"
+        app:showAsAction="always"
+        android:showAsAction="always"
+        android:title="@string/klasse_als_favorit_setzten" />
+
+    <item android:id="@+id/action_reload"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/neuladen"
+        app:showAsAction="always"
+        android:showAsAction="always"/>
+</menu>

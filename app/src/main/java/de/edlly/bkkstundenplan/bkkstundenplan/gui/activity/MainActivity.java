@@ -3,6 +3,9 @@ package de.edlly.bkkstundenplan.bkkstundenplan.gui.activity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,6 +54,27 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
         loadWeeks();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+           //     newGame();
+                return true;
+            case R.id.action_class_fav:
+                setClassFav(classSelecter.getSelectedItem().toString());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private void setupView() {
         setContentView(R.layout.activity_main);
@@ -120,6 +144,9 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
     @Override
     public void onLoaderClassesCompleted(Classes classes) {
         this.classes = classes;
+
+        String favClass = getClassFav();
+
         if (classes != null) {
             List<String> list = new ArrayList<>();
             for (Classes.Classe week : classes.getClasses()) {
@@ -128,6 +155,11 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.simpel_spinner_item, list);
             adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             classSelecter.setAdapter(adapter);
+
+            if(favClass != null){
+                int spinnerPosition = adapter.getPosition(favClass);
+                classSelecter.setSelection(spinnerPosition);
+            }
         }
     }
 
