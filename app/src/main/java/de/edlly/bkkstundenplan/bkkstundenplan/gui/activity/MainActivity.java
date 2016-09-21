@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Statics;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Timetables;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.DateUtils;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExtendedAdapter;
 
 import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.FACH;
@@ -125,6 +127,13 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.simpel_spinner_item, list);
             adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
             weeksSelecter.setAdapter(adapter);
+
+
+            String thisWeek = DateUtils.getActualWeek();
+            if(thisWeek != DateUtils.getActualWeek()){
+                int spinnerPosition = adapter.getPosition(thisWeek);
+                weeksSelecter.setSelection(spinnerPosition);
+            }
         }
     }
 
