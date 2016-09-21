@@ -2,6 +2,7 @@ package de.edlly.bkkstundenplan.bkkstundenplan.gui.activity;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -111,7 +112,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
         }
 
         LoadClassesParam classesParam = new LoadClassesParam(weeksId, "this");
-        new LoadClasses(this, this).execute(classesParam);
+        new LoadClasses(this).execute(classesParam);
     }
 
     @Override
@@ -198,4 +199,9 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
         stunden.setAdapter(adapter);
     }
 
+    @Override
+    public void onException(String e) {
+        Log.w("test", "onException: ." + "Hallo keine daten!" );
+        showErrorDialog("Fehler beim Laden der Daten", e);
+    }
 }

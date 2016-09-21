@@ -1,6 +1,7 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks;
 
 
+@SuppressWarnings("unused")
 public class LoadClassesParam {
     public LoadClassesParam(String weekId, String classId) {
         this.weekId = weekId;
@@ -10,7 +11,7 @@ public class LoadClassesParam {
     private String classId;
     private String weekId;
 
-    public String getClassId() {
+    String getClassId() {
         return classId;
     }
 
@@ -18,7 +19,7 @@ public class LoadClassesParam {
         this.classId = classId;
     }
 
-    public String getWeekId() {
+    String getWeekId() {
         return weekId;
     }
 
