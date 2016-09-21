@@ -1,6 +1,6 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.model.data;
 
-public abstract class FieldStatics {
+public abstract class Statics {
     /**
      * Konstanten für die die Tage
       */

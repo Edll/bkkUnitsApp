@@ -22,7 +22,7 @@ import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetablePara
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.data.FieldStatics;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Statics;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Timetables;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Weeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ExtendedAdapter;
@@ -161,7 +161,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             dayList.put(STUNDEN, timeTableAdapter);
 
             Integer dayNumber = actualDays.getKey();
-            dayList.put(TAG, FieldStatics.getDayName(dayNumber));
+            dayList.put(TAG, Statics.getDayName(dayNumber));
             weekTimeTable.add(dayList);
         }
         return weekTimeTable;

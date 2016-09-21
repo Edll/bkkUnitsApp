@@ -2,7 +2,7 @@ package de.edlly.bkkstundenplan.bkkstundenplan.model.data;
 
 
 @SuppressWarnings("unused")
-class Data implements Idata {
+class Data {
     public Integer id;
 
     public Integer getId() {
