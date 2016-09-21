@@ -1,9 +1,7 @@
 package de.edlly.bkkstundenplan.bkkstundenplan.gui.activity;
 
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,8 +17,8 @@ import java.util.Map;
 import de.edlly.bkkstundenplan.bkkstundenplan.R;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClasses;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadClassesParam;
-import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetableParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetable;
+import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadTimetableParam;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.asyncTasks.LoadWeeks;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.Classes;
 import de.edlly.bkkstundenplan.bkkstundenplan.model.data.DataLoadException;
@@ -34,7 +32,7 @@ import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.HOU
 import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.STUNDEN;
 import static de.edlly.bkkstundenplan.bkkstundenplan.model.utils.ListStatics.TAG;
 
-public class MainActivity extends Activity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadTimetable.IloadTimetable, Spinner.OnItemSelectedListener {
+public class MainActivity extends AppActivity implements LoadClasses.IloadClasses, LoadWeeks.IloadWeeks, LoadTimetable.IloadTimetable, Spinner.OnItemSelectedListener {
     private Spinner weeksSelecter;
     private Spinner classSelecter;
     private ListView stunden;
