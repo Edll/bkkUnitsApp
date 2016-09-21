@@ -150,7 +150,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
     }
 
     private List<Map<String, Object>> getWeeksTimetable(Timetables timetables) {
-        Map<Integer, List<Timetables.Timetable>> days = timetables.getDays();
+        Map<Integer, List<Timetables.Timetable>> days = timetables.getSortedDays();
 
         List<Map<String, Object>> weekTimeTable = new ArrayList<>();
         for (Map.Entry<Integer, List<Timetables.Timetable>> actualDays : days.entrySet()) {
