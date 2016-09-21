@@ -63,10 +63,9 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_reload:
-           //     newGame();
+                loadWeeks();
                 return true;
             case R.id.action_class_fav:
                 setClassFav(classSelecter.getSelectedItem().toString());
