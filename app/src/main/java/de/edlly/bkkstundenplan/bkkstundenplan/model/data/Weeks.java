@@ -3,6 +3,7 @@ package de.edlly.bkkstundenplan.bkkstundenplan.model.data;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Weeks {
     private List<Week> weeks = new ArrayList<>();
 
@@ -20,19 +21,19 @@ public class Weeks {
     }
 
     public String findWeeksId(String result) throws DataLoadException {
-        for(Week week : weeks){
-            if(week.getDate().equals(result)){
+        for (Week week : weeks) {
+            if (week.getDate().equals(result)) {
                 return week.getId().toString();
             }
         }
-        throw new DataLoadException("Es konnte keine Woche mit dem Datum: " + result + " gefunden werden.");
+        throw new DataLoadException("Es konnte keine Woche mit dem Datum: " + result
+                + " gefunden werden.");
     }
 
 
     public class Week extends Data {
         private String date;
         private Integer number;
-
 
         public String getDate() {
             return date;
@@ -52,7 +53,10 @@ public class Weeks {
 
         @Override
         public String toString() {
-            return "[Id: " + getId() + " Date: " + date + " Number: " + number + " ]";
+            return "Week{" +
+                    "date='" + date + '\'' +
+                    ", number=" + number +
+                    '}';
         }
     }
 }
