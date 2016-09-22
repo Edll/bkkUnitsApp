@@ -145,7 +145,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             e.printStackTrace();
         }
 
-        LoadClassesParam classesParam = new LoadClassesParam(weeksId, "this");
+        LoadClassesParam classesParam = new LoadClassesParam(weeksId, null);
         new LoadClasses(this).execute(classesParam);
     }
 
@@ -179,7 +179,7 @@ public class MainActivity extends AppActivity implements LoadClasses.IloadClasse
             e.printStackTrace();
         }
 
-        LoadTimetableParam fieldParam = new LoadTimetableParam(weeksId, classId);
+        LoadTimetableParam fieldParam = new LoadTimetableParam(classId, weeksId);
         new LoadTimetable(this).execute(fieldParam);
     }
 

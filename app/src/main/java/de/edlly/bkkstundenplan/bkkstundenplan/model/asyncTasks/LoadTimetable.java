@@ -20,7 +20,7 @@ public class LoadTimetable extends AsyncTask<LoadTimetableParam, Long, Timetable
 
         for (LoadTimetableParam weeksParam : loadWeeksParams) {
 
-            String uri = UriStatics.getFieldUrl(weeksParam.getClassId(), weeksParam.getFieldId());
+            String uri = UriStatics.getTimetableUrl(weeksParam.getClassId(), weeksParam.getWeekId());
 
             dataLoader.getJsonData(uri);
 

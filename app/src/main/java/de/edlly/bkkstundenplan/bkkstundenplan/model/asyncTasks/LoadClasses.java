@@ -20,7 +20,7 @@ public class LoadClasses extends AsyncTask<LoadClassesParam, Long, Classes> {
 
         for (LoadClassesParam classesParam : classesParams) {
 
-            String uri = UriStatics.getClassUrl(classesParam.getClassId(), classesParam.getWeekId());
+            String uri = UriStatics.getClassUrl(classesParam.getWeekId());
             dataLoader.getJsonData(uri);
 
             String jsonData = dataLoader.getJsonData();

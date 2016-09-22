@@ -9,16 +9,20 @@ abstract class UriStatics {
     final static String URL = "http://www.edlly.de/bkk/";
 
     static String getWeeksUrl(String weeksId){
-        Log.w("test", "getWeeksUrlAll: " + URL + "jsonoutput.php?week=all");
-        return URL + "jsonoutput.php?week=" + weeksId;
+        String url =  URL + "jsonoutput.php?func=week&week_id=" + weeksId;
+        Log.w("test", "getWeeksUrl: " +  url);
+        return url;
     }
 
-    static String getClassUrl(String classId, String weekId) {
-        return URL + "jsonoutput.php?week=" + weekId + "&class=" + classId;
+    static String getClassUrl(String weekId) {
+        String url = URL + "jsonoutput.php?func=class&week_id=" + weekId ;
+        Log.w("test", "getClassUrl: " +  url);
+        return url;
     }
 
-    static String getFieldUrl(String classId, String fieldId){
-        Log.w("test", "getFieldUrl: " +  URL + "jsonoutput.php?field="+ fieldId +"&class=" + classId);
-        return URL + "jsonoutput.php?field="+ fieldId +"&class=" + classId;
+    static String getTimetableUrl(String classId, String weekId){
+        String url = URL + "jsonoutput.php?func=timetable&week_id="+ weekId +"&class_id=" + classId;
+        Log.w("test", "getTimetableUrl: " +  url);
+        return url;
     }
 }
